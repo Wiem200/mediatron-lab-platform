@@ -1,0 +1,413 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediatron-postgres"
+      },
+      "description": "Approved and workflow-filtered publication volume aggregated by publication year.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Year",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 24,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediatron-postgres"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  make_date(p.publication_year, 1, 1) AS \"time\",\n  COUNT(*)::double precision AS \"Publications\"\nFROM publications p\nWHERE p.publication_year IS NOT NULL\n  AND p.status IN (${publication_status:sqlstring})\nGROUP BY 1\nORDER BY 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Publication Count Per Year",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediatron-postgres"
+      },
+      "description": "Share of journal publications versus conference publications in the filtered publication set.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayLabels": [
+          "name",
+          "percent",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediatron-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  category,\n  COUNT(*)::double precision AS publications\nFROM (\n  SELECT CASE\n    WHEN p.type = 'JOURNAL' THEN 'Journal'\n    WHEN p.type IN ('CONFERENCE_A', 'CONFERENCE_B', 'CONFERENCE_C')\n      OR COALESCE(p.indexation, '') ILIKE '%national%'\n      OR COALESCE(p.source, '') ILIKE '%national%'\n      OR p.type = 'WORKSHOP'\n    THEN 'Conference'\n    ELSE NULL\n  END AS category\n  FROM publications p\n  WHERE p.status IN (${publication_status:sqlstring})\n) distribution\nWHERE category IS NOT NULL\nGROUP BY category\nORDER BY category;",
+          "refId": "A"
+        }
+      ],
+      "title": "Journal Vs Conference Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediatron-postgres"
+      },
+      "description": "Conference-only publication classification into A, B, C, and National buckets.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Classification",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "fillOpacity": 70,
+            "gradientMode": "none",
+            "lineWidth": 1,
+            "showPoints": "never",
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediatron-postgres"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  classification,\n  COUNT(*)::double precision AS publications\nFROM (\n  SELECT CASE\n    WHEN p.type = 'CONFERENCE_A' THEN 'A'\n    WHEN p.type = 'CONFERENCE_B' THEN 'B'\n    WHEN p.type = 'CONFERENCE_C' THEN 'C'\n    WHEN COALESCE(p.indexation, '') ILIKE '%national%'\n      OR COALESCE(p.source, '') ILIKE '%national%'\n      OR p.type = 'WORKSHOP'\n    THEN 'National'\n    ELSE NULL\n  END AS classification\n  FROM publications p\n  WHERE p.status IN (${publication_status:sqlstring})\n) conference_breakdown\nWHERE classification IS NOT NULL\nGROUP BY classification\nORDER BY CASE classification WHEN 'A' THEN 1 WHEN 'B' THEN 2 WHEN 'C' THEN 3 ELSE 4 END;",
+          "refId": "A"
+        }
+      ],
+      "title": "Conference Classification Breakdown",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediatron-postgres"
+      },
+      "description": "Publication evolution over time broken down by laboratory member.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Year",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediatron-postgres"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  make_date(p.publication_year, 1, 1) AS \"time\",\n  TRIM(CONCAT(m.first_name, ' ', m.last_name)) AS metric,\n  COUNT(*)::double precision AS value\nFROM publications p\nJOIN members_publications mp ON mp.publication_id = p.id\nJOIN members m ON m.id = mp.member_id\nWHERE p.publication_year IS NOT NULL\n  AND p.status IN (${publication_status:sqlstring})\nGROUP BY 1, 2\nORDER BY 1, 2;",
+          "refId": "A"
+        }
+      ],
+      "title": "Evolution By Member",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediatron-postgres"
+      },
+      "description": "Member-by-year publication density intended as a heatmap-style analytical panel.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "calculate": false,
+            "cellGap": 2,
+            "cellValues": {
+              "unit": "short"
+            },
+            "filterValues": {
+              "le": 1e+63
+            },
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "legend": {
+              "show": true
+            },
+            "lineWidth": 1,
+            "rowHeight": 0.9,
+            "spanNulls": false
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 5,
+      "options": {
+        "calculate": false,
+        "legend": {
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediatron-postgres"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  make_date(p.publication_year, 1, 1) AS \"time\",\n  TRIM(CONCAT(m.first_name, ' ', m.last_name)) AS metric,\n  COUNT(*)::double precision AS value\nFROM publications p\nJOIN members_publications mp ON mp.publication_id = p.id\nJOIN members m ON m.id = mp.member_id\nWHERE p.publication_year IS NOT NULL\n  AND p.status IN (${publication_status:sqlstring})\nGROUP BY 1, 2\nORDER BY 1, 2;",
+          "refId": "A"
+        }
+      ],
+      "title": "Publication Heatmap By Member And Year",
+      "type": "heatmap"
+    }
+  ],
+  "refresh": "24h",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [
+    "mediatron",
+    "statistics",
+    "public"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "APPROVED"
+          ],
+          "value": [
+            "APPROVED"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "mediatron-postgres"
+        },
+        "definition": "SELECT DISTINCT status AS __text, status AS __value FROM publications ORDER BY 1",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Publication Status",
+        "multi": true,
+        "name": "publication_status",
+        "options": [],
+        "query": "SELECT DISTINCT status AS __text, status AS __value FROM publications ORDER BY 1",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-10y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "MEDIATRON Publication Statistics",
+  "uid": "mediatron-publication-statistics",
+  "version": 1,
+  "weekStart": ""
+}

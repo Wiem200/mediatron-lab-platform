@@ -1,0 +1,329 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 320px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-width: 320px;
+    overflow-x: hidden;
+    background: #f5f2ec;
+    color: #1b2d52;
+  }
+
+  #root {
+    min-height: 100vh;
+    overflow-x: clip;
+  }
+
+  img,
+  svg,
+  video,
+  canvas,
+  iframe {
+    max-width: 100%;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    height: auto;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    max-width: 100%;
+    font: inherit;
+  }
+
+  button,
+  a,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  a,
+  span,
+  td,
+  th,
+  div {
+    overflow-wrap: anywhere;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  @media (max-width: 640px) {
+    body {
+      font-size: 15px;
+    }
+  }
+}
+
+@layer components {
+  .mediatron-page {
+    width: min(100%, 108rem);
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 2vw, 2rem);
+  }
+
+  .mediatron-public-shell {
+    width: min(100%, 108rem);
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 2vw, 2rem);
+    padding-block: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .mediatron-section {
+    border-radius: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .mediatron-card {
+    border: 1px solid #e3dac9;
+    background: #ffffff;
+    border-radius: clamp(1.25rem, 3vw, 2rem);
+    box-shadow: 0 18px 45px rgba(27, 45, 82, 0.08);
+  }
+
+  .mediatron-grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .mediatron-grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+    gap: clamp(1rem, 1.8vw, 1.5rem);
+  }
+
+  .mediatron-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 1rem;
+  }
+
+  .mediatron-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mediatron-mobile-card-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@layer utilities {
+  .safe-screen-x {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .text-fluid-title {
+    font-size: clamp(2rem, 4.4vw, 4.5rem);
+    line-height: 0.98;
+  }
+
+  .text-fluid-section {
+    font-size: clamp(1.65rem, 2.6vw, 3rem);
+    line-height: 1.05;
+  }
+}
+
+/* ================================
+   GLOBAL PUBLIC WIDTH
+   ================================ */
+
+:root {
+  --mediatron-public-width: 108rem;
+  --mediatron-public-gutter: clamp(1rem, 2vw, 2rem);
+}
+
+@media (min-width: 1024px) {
+  header > div.mx-auto {
+    width: min(100%, calc(var(--mediatron-public-width) + 2 * var(--mediatron-public-gutter))) !important;
+    max-width: min(100%, calc(var(--mediatron-public-width) + 2 * var(--mediatron-public-gutter))) !important;
+    padding-left: var(--mediatron-public-gutter) !important;
+    padding-right: var(--mediatron-public-gutter) !important;
+  }
+
+  main.mx-auto.max-w-7xl,
+  main.mx-auto.max-w-6xl,
+  section.mx-auto.max-w-7xl,
+  section.mx-auto.max-w-6xl,
+  div.mx-auto.max-w-7xl,
+  div.mx-auto.max-w-6xl {
+    width: min(100%, calc(var(--mediatron-public-width) + 2 * var(--mediatron-public-gutter))) !important;
+    max-width: min(100%, calc(var(--mediatron-public-width) + 2 * var(--mediatron-public-gutter))) !important;
+    padding-left: var(--mediatron-public-gutter) !important;
+    padding-right: var(--mediatron-public-gutter) !important;
+  }
+}
+
+@media (min-width: 1800px) {
+  :root {
+    --mediatron-public-width: 112rem;
+    --mediatron-public-gutter: 2.25rem;
+  }
+}
+
+/* ================================
+   LAPTOP / TABLET SAFETY
+   ================================ */
+
+@media (max-width: 1279px) {
+  header nav {
+    max-width: 100%;
+  }
+
+  main {
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 1023px) {
+  main {
+    max-width: 100vw;
+  }
+
+  .lg\:ml-64 {
+    margin-left: 0 !important;
+  }
+
+  .lg\:p-10 {
+    padding: 1.25rem !important;
+    padding-top: 6rem !important;
+  }
+}
+
+/* ================================
+   MOBILE POLISH
+   ================================ */
+
+@media (max-width: 768px) {
+  main.mx-auto,
+  section.mx-auto,
+  div.mx-auto {
+    max-width: 100vw;
+  }
+
+  .rounded-\[2\.5rem\] {
+    border-radius: 1.5rem !important;
+  }
+
+  .rounded-\[2rem\] {
+    border-radius: 1.35rem !important;
+  }
+
+  .rounded-\[1\.75rem\] {
+    border-radius: 1.25rem !important;
+  }
+
+  [class*="tracking-[0.35em]"],
+  [class*="tracking-[0.4em]"],
+  [class*="tracking-[0.3em]"] {
+    letter-spacing: 0.18em !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-lg,
+  [class*="shadow-[0_18px"],
+  [class*="shadow-[0_25px"] {
+    box-shadow: 0 12px 28px rgba(27, 45, 82, 0.08) !important;
+  }
+
+  [class*="px-12"],
+  [class*="px-10"],
+  [class*="px-8"] {
+    padding-left: 1.15rem !important;
+    padding-right: 1.15rem !important;
+  }
+
+  [class*="py-12"],
+  [class*="py-10"],
+  [class*="p-10"],
+  [class*="p-8"] {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+
+  [class*="text-5xl"] {
+    font-size: 2.15rem !important;
+    line-height: 1.05 !important;
+  }
+
+  [class*="text-4xl"] {
+    font-size: 1.8rem !important;
+    line-height: 1.12 !important;
+  }
+
+  [class*="text-3xl"] {
+    font-size: 1.55rem !important;
+    line-height: 1.16 !important;
+  }
+
+  table {
+    min-width: max-content;
+  }
+
+  .recharts-wrapper,
+  .recharts-surface {
+    max-width: 100% !important;
+  }
+
+  iframe {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  body {
+    font-size: 14px;
+  }
+
+  [class*="px-6"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  [class*="gap-6"] {
+    gap: 1rem !important;
+  }
+}

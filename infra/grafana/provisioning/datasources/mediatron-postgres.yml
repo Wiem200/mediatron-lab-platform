@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: MEDIATRON PostgreSQL
+    uid: mediatron-postgres
+    type: postgres
+    access: proxy
+    url: ${GRAFANA_POSTGRES_HOST}:${GRAFANA_POSTGRES_PORT}
+    user: ${GRAFANA_POSTGRES_USER}
+    secureJsonData:
+      password: ${GRAFANA_POSTGRES_PASSWORD}
+    jsonData:
+      database: ${GRAFANA_POSTGRES_DATABASE}
+      sslmode: ${GRAFANA_POSTGRES_SSLMODE}
+      postgresVersion: 1700
+      timescaledb: false

@@ -1,0 +1,3 @@
+ALTER TABLE projects
+    ADD COLUMN IF NOT EXISTS pdf_link TEXT,
+    ADD COLUMN IF NOT EXISTS poster_link TEXT;

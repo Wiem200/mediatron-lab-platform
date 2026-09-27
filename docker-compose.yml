@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  # 1. Backend Service (Spring Boot)
+  backend:
+    build: ./backend
+    container_name: mediatron_backend
+    ports:
+      - "8080:8080"
+    environment:
+      # We pass the Neon credentials here to override application.properties
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ep-cold-mud-a95ocgs5-pooler.gwc.azure.neon.tech/neondb?sslmode=require
+      - SPRING_DATASOURCE_USERNAME=neondb_owner
+      - SPRING_DATASOURCE_PASSWORD=npg_eUHFa4Z7AMuC
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+      - SPRING_FLYWAY_ENABLED=true
+    networks:
+      - mediatron_network
+
+  # 2. Frontend Service (React + Vite)
+  # Note: This will only work if you have a Dockerfile inside your /frontend folder
+  frontend:
+    build: ./frontend
+    container_name: mediatron_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - VITE_GRAFANA_PUBLIC_URL=http://localhost:3000
+      - VITE_GRAFANA_DASHBOARD_UID=mediatron-publication-statistics
+    depends_on:
+      - backend
+      - grafana
+    networks:
+      - mediatron_network
+
+  # 3. Grafana Service (Public statistics dashboards)
+  grafana:
+    image: grafana/grafana-oss:11.1.0
+    container_name: mediatron_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin123!}
+      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-http://localhost:3000}
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_USERS_DEFAULT_THEME=light
+      - GRAFANA_POSTGRES_HOST=${GRAFANA_POSTGRES_HOST:-ep-cold-mud-a95ocgs5-pooler.gwc.azure.neon.tech}
+      - GRAFANA_POSTGRES_PORT=${GRAFANA_POSTGRES_PORT:-5432}
+      - GRAFANA_POSTGRES_DATABASE=${GRAFANA_POSTGRES_DATABASE:-neondb}
+      - GRAFANA_POSTGRES_USER=${GRAFANA_POSTGRES_USER:-neondb_owner}
+      - GRAFANA_POSTGRES_PASSWORD=${GRAFANA_POSTGRES_PASSWORD:-npg_eUHFa4Z7AMuC}
+      - GRAFANA_POSTGRES_SSLMODE=${GRAFANA_POSTGRES_SSLMODE:-require}
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    networks:
+      - mediatron_network
+
+networks:
+  mediatron_network:
+    driver: bridge
+
+volumes:
+  grafana_data:

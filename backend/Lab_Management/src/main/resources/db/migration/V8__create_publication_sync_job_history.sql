@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS publication_sync_job_history (
+    id SERIAL PRIMARY KEY,
+    trigger_type VARCHAR(50) NOT NULL,
+    triggered_by VARCHAR(255) NOT NULL,
+    target_member_id INTEGER,
+    target_member_name VARCHAR(255),
+    job_status VARCHAR(30) NOT NULL,
+    started_at TIMESTAMP NOT NULL,
+    finished_at TIMESTAMP NOT NULL,
+    processed_members INTEGER NOT NULL DEFAULT 0,
+    successful_members INTEGER NOT NULL DEFAULT 0,
+    failed_members INTEGER NOT NULL DEFAULT 0,
+    total_fetched INTEGER NOT NULL DEFAULT 0,
+    total_imported INTEGER NOT NULL DEFAULT 0,
+    total_linked_existing INTEGER NOT NULL DEFAULT 0,
+    total_skipped INTEGER NOT NULL DEFAULT 0,
+    error_count INTEGER NOT NULL DEFAULT 0,
+    error_details TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

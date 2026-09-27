@@ -1,0 +1,59 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [S1_S3_S4]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Azure credentials secret exists
+        run: |
+          if [ -z '${{ secrets.AZURE_CREDENTIALS }}' ]; then
+            echo "AZURE_CREDENTIALS is EMPTY or not available"
+            exit 1
+          else
+            echo "AZURE_CREDENTIALS is available"
+          fi
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to ACR
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login "${{ secrets.ACR_LOGIN_SERVER }}" -u "${{ secrets.ACR_USERNAME }}" --password-stdin     -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      - name: Build & push backend
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest ./backend/Lab_Management
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest
+
+      - name: Build & push frontend
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest ./frontend
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App (frontend)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: mediatron-frontend
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest
+
+      - name: Deploy to Azure Web App (backend)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: mediatron-backend
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest

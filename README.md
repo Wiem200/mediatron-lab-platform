@@ -21,44 +21,60 @@ An automated, data-driven web application developed for the **MEDIATRON Research
 - **🤖 Scientific Output Automation & Management**
   - **Hybrid Ingestion Engine**: Automated fetching via Crossref, Semantic Scholar, and Google Scholar APIs/scraping.
   - **Deduplication Engine**: Two-tier duplicate detection using DOI uniqueness and title/year similarity heuristics.
-  - **Author Matching**: Intelligent similarity-based matching (≥ 70%) associating scraped papers to member profiles[cite: 6].
-  - **Filterable Repository**: Real-time multi-criteria filtering (author, type, year) with type badges and CSV/PDF export options[cite: 6].
+  - **Author Matching**: Intelligent similarity-based matching (≥ 70%) associating scraped papers to member profiles.
+  - **Filterable Repository**: Real-time multi-criteria filtering (author, type, year) with type badges and CSV/PDF export options.
 
 - **🔄 Human-in-the-Loop Validation Workflows**
-  - Multi-stage lifecycle (`PENDING` → `APPROVED` / `REJECTED`) for scraped papers, projects, and events[cite: 6].
-  - Dedicated validation dashboards for members and the Laboratory Head[cite: 6].
+  - Multi-stage lifecycle (`PENDING` → `APPROVED` / `REJECTED`) for scraped papers, projects, and events.
+  - Dedicated validation dashboards for members and the Laboratory Head.
 
 - **📊 Public Portal & Interactive Analytics**
-  - Dynamic landing page featuring lab history, research axes, latest papers, and projects[cite: 6].
-  - Embedded **Grafana** analytics dashboards for real-time statistical insights[cite: 6].
-  - Dedicated directories for members and PhD students[cite: 6].
+  - Dynamic landing page featuring lab history, research axes, latest papers, and projects.
+  - Embedded **Grafana** analytics dashboards for real-time statistical insights.
+  - Dedicated directories for members and PhD students.
 
 - **💬 Intelligent Engagement & Chatbot**
-  - Floating **AI Chatbot** powered by Google Gemini, grounded directly in database context[cite: 6].
-  - Automated subscriber alerts and newsletter broadcasts via Brevo integration[cite: 6].
+  - Floating **AI Chatbot** powered by Google Gemini, grounded directly in database context.
+  - Automated subscriber alerts and newsletter broadcasts via Brevo integration.
 
 ---
 
 ## 🛠 Tech Stack
 
 ### **Backend**
-* **Framework:** Java 17, Spring Boot 3.4.3[cite: 6]
-* **Security:** Spring Security, JWT, BCrypt Password Hashing[cite: 6]
-* **Persistence:** Spring Data JPA, Hibernate[cite: 6]
-* **Database Management:** Flyway Migrations[cite: 6]
+* **Framework:** Java 17, Spring Boot 3.4.3
+* **Security:** Spring Security, JWT, BCrypt Password Hashing
+* **Persistence:** Spring Data JPA, Hibernate
+* **Database Management:** Flyway Migrations
 
 ### **Frontend**
-* **Library/Tooling:** React.js, Vite[cite: 6]
-* **Styling:** Tailwind CSS[cite: 6]
-* **Data Visualization:** Grafana Dashboards[cite: 6]
+* **Library/Tooling:** React.js, Vite
+* **Styling:** Tailwind CSS
+* **Data Visualization:** Grafana Dashboards
 
 ### **Database & DevOps**
-* **Database:** Serverless Neon PostgreSQL[cite: 6]
-* **Containerization:** Docker[cite: 6]
-* **External Services:** Crossref API, Semantic Scholar API, Google Scholar Scraper, Brevo Mailer API, Google Gemini API[cite: 6]
+* **Database:** Serverless Neon PostgreSQL
+* **Containerization:** Docker
+* **External Services:** Crossref API, Semantic Scholar API, Google Scholar Scraper, Brevo Mailer API, Google Gemini API
 
 ---
 
 ## 🏗 System Architecture
+The platform follows a layered Model-View-Controller (MVC) architecture ensuring clear separation of concerns:
++-------------------------------------------------------------+
+|                 PRESENTATION LAYER                          |
+|             React.js | Tailwind CSS | Vite                  |
++------------------------------+------------------------------+
+| REST APIs (JSON / JWT)
++------------------------------v------------------------------+
+|                 BUSINESS LOGIC LAYER                        |
+|   Spring Boot Services | Security | Scheduler | AI Engine   |
++------------------------------+------------------------------+
+| Spring Data JPA / Flyway
++------------------------------v------------------------------+
+|                    PERSISTENCE LAYER                        |
+|                  Neon PostgreSQL Database                   |
++-------------------------------------------------------------+
+
 
 The platform follows a layered Model-View-Controller (MVC) architecture ensuring clear separation of concerns[cite: 6]:
